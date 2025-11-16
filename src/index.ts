@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import pool from './config/db.js';
+import { RowDataPacket } from 'mysql2';
+import pool from './config/db';
 
 const app = express();
 // Middlewares
@@ -11,7 +12,7 @@ app.listen(PORT, () => {
     console.log(`Server corriendo en http://localhost:${PORT}`);
 });
 
-// ENDPOINT 1: Obtener todos los alumnos (Read)
+// ENDPOINT 1: Obtener todos los alumnos
 app.get('/api/students', async (req, res) => {
     try {
         const query = "SELECT * FROM student ORDER BY createdAt DESC";
@@ -23,28 +24,40 @@ app.get('/api/students', async (req, res) => {
     }
 });
 
-// ENDPOINT 2: Crear un nuevo alumno (Create) - MODO SEGURO
+// ENDPOINT 2: Crear un nuevo alumno
 app.post('/api/students', async (req, res) => {
     try {
-        const { name, course } = req.body;
-        // 1. Definimos el SQL con Placeholders (?)
-        const query = "INSERT INTO student (name, course) VALUES (?, ?)";
-        // 2. Pasamos los valores en un array separado
-        const [result] = await pool.query(query, [name, course]);
-        // 3. Respondemos con el nuevo ID (opcional)
-        res.status(201).json({ newId: (result as any).insertId, name, course });
+        const { name, email, course, edad } = req.body;
+        const query = "INSERT INTO student (name, email, course, edad) VALUES (?, ?, ?, ?)";
+        const [result] = await pool.query(query, [name, email, course, edad]);
+        res.status(201).json({ newId: (result as any).insertId, name, email, course, edad });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al crear el alumno' });
     }
 });
+// ENDPOINT 3: Obtener un alumno por ID
+app.get('/api/students/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const query = "SELECT * FROM student WHERE id = ?";
+        const [rows] = await pool.query<RowDataPacket[]>(query, [id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Alumno no encontrado' });
+        }
+        res.json(rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el alumno' });
+    }
+});
 
-// ENDPOINT 3: Actualizar un alumno (Update) - MODO SEGURO
+// ENDPOINT 4: Actualizar un alumno
 app.put('/api/students/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, course } = req.body;
-        const query = "UPDATE student SET name = ?, course = ? WHERE id = ?";
+        const { name, email, course, edad } = req.body;
+        const query = "UPDATE student SET name = ?, email = ?, course = ?, edad = ? WHERE id = ?";
         const [result] = await pool.query(query, [name, course, id]);
         res.status(200).json({ id, name, course });
     } catch (error) {
@@ -53,7 +66,7 @@ app.put('/api/students/:id', async (req, res) => {
     }
 });
 
-// ENDPOINT 4: Eliminar un alumno (Delete) - MODO SEGURO
+// ENDPOINT 5: Eliminar un alumno
 app.delete('/api/students/:id', async (req, res) => {
     try {
         const { id } = req.params;
