@@ -102,5 +102,16 @@ router.patch('/:id', async (req, res) => {
     }
 });
 
+router.get('/total/count', async (req, res) => {
+    try {
+        const query = "SELECT COUNT(*) AS total FROM student";
+        const [rows] = await pool.query<RowDataPacket[]>(query);
+        const total = (rows[0] as RowDataPacket | undefined)?.total ?? 0;
+        res.json({ total });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el total de alumnos' });
+    }
+});
 
 export default router;
