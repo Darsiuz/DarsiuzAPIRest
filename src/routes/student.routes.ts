@@ -4,7 +4,15 @@ import pool from "../config/db";
 
 const router = Router();
 
-// Obtener todos los alumnos
+/**
+ * @swagger
+ * /api/students:
+ *   get:
+ *     summary: Obtener todos los alumnos
+ *     responses:
+ *       200:
+ *         description: Lista de alumnos
+ */
 router.get('/', async (req, res) => {
     try {
         const query = "SELECT * FROM student ORDER BY id DESC";
@@ -16,7 +24,30 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Crear alumno
+/**
+ * @swagger
+ * /api/students:
+ *   post:
+ *     summary: Crear un nuevo alumno
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               course:
+ *                 type: string
+ *               edad:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Alumno creado
+ */
 router.post('/', async (req, res) => {
     try {
         const { name, email, course, edad } = req.body;
@@ -29,7 +60,24 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Obtener alumno por ID
+/**
+ * @swagger
+ * /api/students/{id}:
+ *   get:
+ *     summary: Obtener un alumno por ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del alumno
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Alumno encontrado
+ *       404:
+ *         description: Alumno no encontrado
+ */
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -47,7 +95,24 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Eliminar alumno
+/**
+ * @swagger
+ * /api/students/{id}:
+ *   delete:
+ *     summary: Eliminar un alumno por ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del alumno
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Alumno eliminado
+ *       404:
+ *         description: Alumno no encontrado
+ */
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -61,7 +126,39 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-// Actualizar alumno
+/**
+ * @swagger
+ * /api/students/{id}:
+ *   put:
+ *     summary: Actualizar un alumno por ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del alumno
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               course:
+ *                 type: string
+ *               edad:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Alumno actualizado
+ *       404:
+ *         description: Alumno no encontrado
+ */
 router.put('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -76,6 +173,40 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: 'Error al actualizar el alumno' });
     }
 });
+
+/**
+ * @swagger
+ * /api/students/{id}:
+ *   patch:
+ *     summary: Actualizar parcialmente un alumno por ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del alumno
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               course:
+ *                 type: string
+ *               edad:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Alumno actualizado parcialmente
+ *       404:
+ *         description: Alumno no encontrado
+ */
 router.patch('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -102,6 +233,17 @@ router.patch('/:id', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/students/total/count:
+ *   get:
+ *     summary: Obtener el total de alumnos
+ *     responses:
+ *       200:
+ *         description: Total de alumnos
+ *       500:
+ *         description: Error al obtener el total de alumnos
+ */
 router.get('/total/count', async (req, res) => {
     try {
         const query = "SELECT COUNT(*) AS total FROM student";
