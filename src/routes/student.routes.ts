@@ -216,7 +216,7 @@ router.patch('/:id', async (req, res) => {
         const values = Object.values(fields);
 
         if (keys.length === 0) {
-            return res.status(400).json({ error: "No se enviaron campos a actualizar" });
+            return res.status(400).json({ error: "No se enviaron campos" });
         }
 
         const setQuery = keys.map(key => `${key} = ?`).join(', ');
@@ -225,7 +225,7 @@ router.patch('/:id', async (req, res) => {
 
         await pool.query(query, [...values, id]);
 
-        res.status(200).json({ message: "Alumno actualizado parcialmente", fields });
+        res.status(200).json({ message: "Alumno actualizado", fields });
 
     } catch (error) {
         console.error(error);
