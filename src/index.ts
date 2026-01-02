@@ -1,10 +1,12 @@
 import express from 'express';
 import cors from 'cors';
-import studentRoutes from './routes/student.routes';
 import { Request, Response, NextFunction } from 'express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerOptions } from './routes/swagger.config';
+
+import studentRoutes from './routes/student.routes';
+import gradesRoutes from './routes/grades.routes';
 
 const app = express();
 // Middlewares
@@ -35,6 +37,7 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(spec));
 
 app.use(logger);
 app.use('/api/students', authGuard, studentRoutes);
+app.use('/api/grades', authGuard, gradesRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

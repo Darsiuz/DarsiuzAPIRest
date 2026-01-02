@@ -2,11 +2,11 @@ export const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "API de Estudiantes UTP",
+            title: "API Final de DAVID GALVEZ MONTUFAR",
             version: "1.0.2",
             description: "Una API documentada con Swagger para gestionar estudiantes.",
             contact: {
-                name: "Soporte Tecnico Darsiuz",
+                name: "Soporte Tecnico David Galvez Montufar",
                 email: "spd@utp.pe",
             },
         },
